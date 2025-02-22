@@ -3,12 +3,12 @@ import threading
 import json
 
 class PollServer:
-    def __init__(self):
-        self.host = "127.0.0.1"
-        self.port = 53827
+    def __init__(self, host, port):
+        self.host = host
+        self.port = port
         self.connected_clients = []  
         self.lock = threading.Lock()
-        self.username = input("Enter your username:")
+        self.username = 'SERVER_NAME'
 
     def handle_client(self, conn, addr):
         print(f"Client connected from {addr[0], addr[1]}")
