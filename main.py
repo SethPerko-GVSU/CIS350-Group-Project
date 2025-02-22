@@ -49,14 +49,14 @@ class Chatroom(tk.Tk):
         self.server = None
         self.client = None
 
-        the_menu = Menu(self)
+        ''' the_menu = Menu(self)
         self.config(menu=the_menu)
         filemenu = Menu(the_menu)
         the_menu.add_cascade(label='File', menu=filemenu)
         filemenu.add_command(label='New')
         filemenu.add_command(label='Open...')
         filemenu.add_separator()
-        filemenu.add_command(label='Exit', command=self.quit)
+        filemenu.add_command(label='Exit', command=self.quit) '''
 
         self.show_frame("StartPage")
 
@@ -92,10 +92,9 @@ class Server_Page(tk.Frame):
         
         IP_info = tk.StringVar()
         Port = tk.StringVar()
-        
         self.text_var = tk.StringVar()
         self.text_var.set("Set up server settings...")
-        
+         
         label = tk.Label(self, textvariable=self.text_var, font=controller.title_font).grid(row=0, column=0, columnspan=3)
         local_button = tk.Button(self, text="Local", command=lambda: start_server(controller, "127.0.0.1", 53827)).grid(row=1, column=0)
         IP_label = tk.Label(self, text="Server IP:").grid(row=1, column=1)
