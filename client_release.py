@@ -13,18 +13,15 @@ class PollClient:
 
     def start(self):
         """Starts the client and begins listening for messages."""
-        try:
-            self.client_socket.connect((self.host, self.port))
-            print("Connected to the chatroom.\n")
+        self.client_socket.connect((self.host, self.port))
+        print("Connected to the chatroom.\n")
 
-            # Start a thread to receive messages
-            threading.Thread(target=self.receive_messages, daemon=True).start()
-            
-            # Start a thread to send messages from the queue
-            threading.Thread(target=self.process_messages, daemon=True).start()
+        # Start a thread to receive messages
+        threading.Thread(target=self.receive_messages, daemon=True).start()
+        
+        # Start a thread to send messages from the queue
+        threading.Thread(target=self.process_messages, daemon=True).start()
 
-        except Exception as e:
-            print(f"Connection error: {e}")
 
     def send_message(self, message):
         """Sends a message from the GUI to the server."""
@@ -37,22 +34,16 @@ class PollClient:
         while self.running:
             if not self.message_queue.empty():
                 message = self.message_queue.get()
-                try:
-                    self.client_socket.sendall(message.encode())
-                except Exception as e:
-                    print(f"Error sending message: {e}")
+                self.client_socket.sendall(message.encode())
+                
 
     def receive_messages(self):
         """Continuously receives messages from the server."""
         while self.running:
-            try:
                 data = self.client_socket.recv(1024)
                 if not data:
                     break
                 print(data.decode())  # Display received messages in console
-            except Exception as e:
-                print(f"Error receiving message: {e}")
-                break
 
     def stop(self):
         """Stops the client gracefully."""
