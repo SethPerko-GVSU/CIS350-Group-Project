@@ -7,31 +7,31 @@ import threading
 
 def start_server(controller, host, port):
     """Start the server in a separate thread to prevent UI freezing."""
+    controller.server = PollServer(host, port)
     def run_server():
-        controller.server = PollServer(host, port)
         controller.server.start()
 
-    server_thread = threading.Thread(target=run_server, daemon=True)
-    server_thread.start()
+    thread = threading.Thread(target=run_server, daemon=True)
+    thread.start()
 
     controller.show_frame("Server_Page")
     
 def start_client(controller, IP, Port, Username):
     """Start the client in a separate thread to prevent UI freezing."""
+    controller.client = PollClient(IP, int(Port), Username)
     def run_client():
-        controller.client = PollClient(IP, int(Port), Username)
         controller.client.start()
         controller.client.receive_messages()
 
-    server_thread = threading.Thread(target=run_client, daemon=True)
-    server_thread.start()
+    thread = threading.Thread(target=run_client, daemon=True)
+    thread.start()
 
     controller.show_frame("Chatroom_Page")
 
 class Chatroom(tk.Tk):
 
-    def __init__(self, *args, **kwargs):
-        tk.Tk.__init__(self, *args, **kwargs)
+    def __init__(self):
+        tk.Tk.__init__(self)
 
         self.title_font = tkfont.Font(family='Helvetica', size=18, weight="bold", slant="italic")
 
@@ -48,15 +48,6 @@ class Chatroom(tk.Tk):
             
         self.server = None
         self.client = None
-
-        ''' the_menu = Menu(self)
-        self.config(menu=the_menu)
-        filemenu = Menu(the_menu)
-        the_menu.add_cascade(label='File', menu=filemenu)
-        filemenu.add_command(label='New')
-        filemenu.add_command(label='Open...')
-        filemenu.add_separator()
-        filemenu.add_command(label='Exit', command=self.quit) '''
 
         self.show_frame("StartPage")
 
