@@ -8,6 +8,7 @@ class PollServer:
         self.port = port
         self.connected_clients = []  
         self.lock = threading.Lock()
+        self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.username = 'SERVER_NAME'
 
     def handle_client(self, conn, addr):
@@ -29,7 +30,6 @@ class PollServer:
                     conn.sendall(message.encode())
 
     def start(self):
-        self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.s.bind((self.host, self.port))
         self.s.listen()
         print(f"Server listening on {self.host}:{self.port}")
