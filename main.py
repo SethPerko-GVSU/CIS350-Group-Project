@@ -6,7 +6,6 @@ from server_release import PollServer
 import threading
 
 def start_server(controller, host, port):
-    """Start the server in a separate thread to prevent UI freezing."""
     controller.server = PollServer(host, port)
     def run_server():
         controller.server.start()
@@ -17,7 +16,6 @@ def start_server(controller, host, port):
     controller.show_frame("Server_Page")
     
 def start_client(controller, IP, Port, Username):
-    """Start the client in a separate thread to prevent UI freezing."""
     controller.client = PollClient(IP, int(Port), Username)
     def run_client():
         controller.client.start()
@@ -52,7 +50,6 @@ class Chatroom(tk.Tk):
         self.show_frame("StartPage")
 
     def show_frame(self, page_name):
-        '''Show a frame for the given page name'''
         frame = self.frames[page_name]
         frame.tkraise()
         
@@ -95,7 +92,6 @@ class Server_Page(tk.Frame):
         public_button = tk.Button(self, text="Use Values", command=lambda: start_server(controller, IP_info.get(), int(Port.get()))).grid(row=2, column=0)
         
     def update_server_info(self, host, port):
-        # Update the label with server host and port.
         self.text_var.set(f"Server running at {host}:{port}")
 
 
