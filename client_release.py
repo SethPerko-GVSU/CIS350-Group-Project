@@ -37,7 +37,7 @@ class PollClient:
                 message = self.message_queue.get()
                 self.client_socket.sendall(message.encode())
                 
-    # Everything after this line is written by me
+    # Everything after this line is written by either myself or Landon
 
     def receive_messages(self):
         while self.running:
