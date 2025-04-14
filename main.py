@@ -25,6 +25,13 @@ def start_client(controller, IP, Port, Username):
 
     thread = threading.Thread(target=run_client, daemon=True)
     thread.start()
+    
+    if not controller.username:
+        with open("chatroom_info.txt", "w") as f:
+            f.write(Username + '\n' + IP + '\n' + str(Port) + '\n')
+        controller.username = Username
+        controller.IP = IP
+        controller.Port = str(Port)
 
     controller.show_frame("Chatroom_Page")
 
@@ -35,9 +42,30 @@ class Chatroom(tk.Tk):
 
         self.title_font = tkfont.Font(family='Helvetica', size=18, weight="bold", slant="italic")
 
+        try:
+            with open("chatroom_info.txt", "r") as f:
+                self.username = f.readline().strip()
+                self.IP = f.readline().strip()
+                self.Port = f.readline().strip()
+        except:
+            with open("chatroom_info.txt", "w") as f:
+                self.username = ""
+                self.IP = ""
+                self.Port = ""
+            
+        try:
+            with open("chatroom_text.txt", "r") as f: 
+                self.chatroom_text = f.read()
+        except:
+            with open("chatroom_text.txt", "w") as f: 
+                self.chatroom_text = ""
+        
+        self.server = None
+        self.client = None
+        
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand=True)
-
+        
         self.frames = {}
         for F in (StartPage, Server_Page, Client_Page, Chatroom_Page):
             page_name = F.__name__
@@ -45,10 +73,7 @@ class Chatroom(tk.Tk):
             self.frames[page_name] = frame
 
             frame.grid(row=0, column=0, sticky="nsew")
-            
-        self.server = None
-        self.client = None
-
+        
         self.show_frame("StartPage")
 
     def show_frame(self, page_name):
@@ -109,6 +134,15 @@ class Client_Page(tk.Frame):
         Port = tk.StringVar()
         self.Username = tk.StringVar()
         
+        if controller.username:
+            self.Username.set(controller.username)
+            
+        if controller.IP:
+            IP_info.set(controller.IP)
+        
+        if controller.Port:
+            Port.set(controller.Port)
+        
         IP_label = tk.Label(self, text="Server IP:").grid(row=0, column=0)
         Port_label = tk.Label(self, text="Server Port:").grid(row=1, column=0)
         Username_label = tk.Label(self, text="Username:").grid(row=2, column=0)
@@ -126,7 +160,7 @@ class Chatroom_Page(tk.Frame):
         self.curr_message = tk.StringVar()
         
         self.chat_box_text = tk.StringVar()
-        self.chat_box_text.set("")
+        self.chat_box_text.set(self.controller.chatroom_text)
         chat_box = Message(self, textvariable=self.chat_box_text).grid(row=0, column=0)
 
         message_entry = tk.Entry(self, textvariable=self.curr_message).grid(row=1, column=0)
@@ -140,7 +174,11 @@ class Chatroom_Page(tk.Frame):
         self.curr_message.set("")
         
     def update_chat_box(self, text, sender):
-        self.chat_box_text.set(self.chat_box_text.get() + '\n' + sender + ": " + text)
+        self.chat_box_text.set(self.chat_box_text.get().strip() + '\n' + sender + ": " + text)
+        self.controller.chatroom_text = self.chat_box_text.get()
+        
+        with open("chatroom_text.txt", "w") as f: 
+            f.write(self.controller.chatroom_text)
         
 
 if __name__ == "__main__":
